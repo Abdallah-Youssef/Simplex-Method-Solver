@@ -37,12 +37,17 @@ if __name__ == '__main__':
 
         for row in range(num_rows):
             if row == pivot_row:
-                continue
+                # normalize pivot row
+                divisor = A[pivot_row][pivot_column]
+                for column in range(num_columns):
+                    A[row][column] /= divisor
 
-            factor = Fraction(A[row][pivot_column], A[pivot_row][pivot_column])
+            else:
+                # gauss jordan elimination
+                factor = Fraction(A[row][pivot_column], A[pivot_row][pivot_column])
 
-            for column in range(num_columns):
-                A[row][column] -= factor * A[pivot_row][column]
+                for column in range(num_columns):
+                    A[row][column] -= factor * A[pivot_row][column]
 
         print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
 
