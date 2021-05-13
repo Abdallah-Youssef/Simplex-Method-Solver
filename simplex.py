@@ -16,10 +16,10 @@ import math
 '''
 6
 4
-696 399 -100 0 0 0 900
-3 1 0 1 0 0 3
-4 3 -1 0 1 0 6
-1 2 0 0 0 1 4
+0	0	-2	0	0	0	0
+1	-3	7	1	0	0	-5
+-1	1	-1	0	1	0	1
+3	1	-10	0	0	1	8
 '''
 
 
@@ -40,7 +40,7 @@ def ratio_test(col, rhs_col):
 
     return min_i
 
-
+# Returns pivot column, row for maximization problem
 def next_iteration(A):
     m = A.shape[1]  # number of columns
 
@@ -56,8 +56,30 @@ def next_iteration(A):
     return min_j, min_i
 
 
+def row_operation(A, pivot_row, pivot_column):
+    print(f"Variable {pivot_column} enters, {pivot_row-1} leaves\n")
+    num_rows, num_columns = A.shape
+
+    for row in range(num_rows):
+        if row == pivot_row:
+            # normalize pivot row
+            divisor = A[pivot_row][pivot_column]
+            for column in range(num_columns):
+                A[row][column] /= divisor
+
+        else:
+            # gauss jordan elimination
+            factor = Fraction(A[row][pivot_column], A[pivot_row][pivot_column])
+
+            for column in range(num_columns):
+                A[row][column] -= factor * A[pivot_row][column]
+
+    print('----------------------------------------------------------------')
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
+
+
 if __name__ == '__main__':
-    automatic = True
+    automatic = False
 
     n = int(input("Number of variables: "))
     m = int(input("Number of equations: "))
@@ -78,26 +100,17 @@ if __name__ == '__main__':
 
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
 
-    pivot_column, pivot_row = next_iteration(A)
-    while A[0][pivot_column] < 0:
-        print(f"Variable {pivot_column} enters, {pivot_row-1} leaves\n")
-        for row in range(num_rows):
-            if row == pivot_row:
-                # normalize pivot row
-                divisor = A[pivot_row][pivot_column]
-                for column in range(num_columns):
-                    A[row][column] /= divisor
+    if ~automatic:
+        while True:
+            pivot_column = int(input("Enter entering var index: "))  # pivot column
+            pivot_row = int(input("Enter leaving equation index: "))    # pivot row
+            row_operation(A, pivot_row, pivot_column)
 
-            else:
-                # gauss jordan elimination
-                factor = Fraction(A[row][pivot_column], A[pivot_row][pivot_column])
-
-                for column in range(num_columns):
-                    A[row][column] -= factor * A[pivot_row][column]
-
-        print('----------------------------------------------------------------')
-        print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
+    else:
         pivot_column, pivot_row = next_iteration(A)
+        while A[0][pivot_column] < 0:
+            row_operation(A, pivot_row, pivot_column)
+            pivot_column, pivot_row = next_iteration(A)
 
 
 
