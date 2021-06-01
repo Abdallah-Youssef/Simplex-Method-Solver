@@ -100,6 +100,7 @@ def row_operation(A, pivot_row, pivot_column):
 
 # improves optimality
 # returns -1 if solution is optimal (all z-row coefficients positive in the case of maximization)
+# Throws an error if the problem is unbounded
 def optimality_iteration(A):
     n, m = A.shape
 
@@ -123,7 +124,7 @@ def optimality_iteration(A):
     row_operation(A, pivot_row, pivot_column)
 
 
-# improves optimality
+# improves feasibility
 # returns -1 if solution is feasible (all rhs values are positive)
 # Throws an error if the problem is infeasible (all coefficients in the pivot are row non-negative)
 def feasibility_iteration(A):
