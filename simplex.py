@@ -6,35 +6,22 @@ import math
 automatic = False
 maximization = False
 minimization = not maximization
-'''
--5	-4	0	0	0	0	0
-6	4	1	0	0	0	24
-1	2	0	1	0	0	6
--1	1	0	0	1	0	1
-0	1	0	0	0	1	2
 
-'''
-
-'''
-7
-4
--3 -2 -1 0 0 0 0
--3 -1 -1 1 0 0 -3
-3 -3 -1 0 1 0 -6
-1 1 1 0 0 1 3
-'''
 '''
 7
 3
+495 490 -100 -100 0 0 1200
 3 2 -1 0 1 0 5
+2 3 0 -1 0 1 7
 '''
 
 
 def pretty_print(A):
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
+    print("-------------------------------------------------")
 
 
-# used to determine entering variable in dual simples
+# used to determine entering variable in dual simplex
 def optimality_ratio_test(row, z_row):
     m = len(z_row)
 
@@ -77,7 +64,7 @@ def feasibility_ratio_test(col, rhs_col):
 
 # Pivot_column enters. pivot_row exits
 def row_operation(A, pivot_row, pivot_column):
-    print(f"Variable {pivot_column} enters, {pivot_row-1} leaves\n")
+    print(f"Variable {pivot_column} enters. Row {pivot_row} leaves\n")
     num_rows, num_columns = A.shape
 
     for row in range(num_rows):
@@ -94,8 +81,6 @@ def row_operation(A, pivot_row, pivot_column):
             for column in range(num_columns):
                 A[row][column] -= factor * A[pivot_row][column]
 
-    print('----------------------------------------------------------------')
-    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
 
 
 # improves optimality
@@ -109,7 +94,6 @@ def optimality_iteration(A):
     pivot_column = -1
 
     for j in range(m-1):  # j < m-1 to skip RHS column
-        print(A[0][j])
         if (maximization and A[0][j] < best_reduced_cost)\
                 or (minimization and A[0][j] > best_reduced_cost):
             pivot_column = j
@@ -121,6 +105,7 @@ def optimality_iteration(A):
         return -1
 
     pivot_row = feasibility_ratio_test(A[:, pivot_column], A[:, m-1])
+    print("Pivot row = {}".format(pivot_row))
     row_operation(A, pivot_row, pivot_column)
 
 
@@ -130,7 +115,7 @@ def optimality_iteration(A):
 def feasibility_iteration(A):
     n, m = A.shape
     # choose an infeasible variable to leave (pivot row)
-    best_rhs = 1000000
+    best_rhs = 0
     pivot_row = -1
     for i in range(n):
         if i == 0:  # skip z row
@@ -170,19 +155,9 @@ if __name__ == '__main__':
     while feasibility_iteration(A) != -1:
         pretty_print(A)
 
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     while optimality_iteration(A) != -1:
         pretty_print(A)
-    '''if ~automatic:
-        while True:
-            pivot_column = int(input("Enter entering var index: "))  # pivot column
-            pivot_row = int(input("Enter leaving equation index: "))    # pivot row
-            row_operation(A, pivot_row, pivot_column)
-
-    else:
-        pivot_column, pivot_row = next_iteration(A)
-        while A[0][pivot_column] < 0:
-            row_operation(A, pivot_row, pivot_column)
-            pivot_column, pivot_row = next_iteration(A)'''
 
 
 
