@@ -32,6 +32,7 @@ minimization = not maximization
 2 -1 4 0 0 1 10
 '''
 
+
 # used to determine entering variable in dual simples
 def optimality_ratio_test(row, z_row):
     m = len(z_row)
@@ -71,6 +72,7 @@ def feasibility_ratio_test(col, rhs_col):
         raise ValueError("Unbounded")
 
     return min_i
+
 
 # Pivot_column enters. pivot_row exits
 def row_operation(A, pivot_row, pivot_column):
