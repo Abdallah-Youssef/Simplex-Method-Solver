@@ -33,6 +33,10 @@ minimization = not maximization
 '''
 
 
+def pretty_print(A):
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
+
+
 # used to determine entering variable in dual simples
 def optimality_ratio_test(row, z_row):
     m = len(z_row)
@@ -97,6 +101,8 @@ def row_operation(A, pivot_row, pivot_column):
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
 
 
+# improves optimality
+# returns -1 if solution is optimal (all z-row coefficients positive in the case of maximization)
 def optimality_iteration(A):
     n, m = A.shape
 
@@ -104,15 +110,12 @@ def optimality_iteration(A):
     best_reduced_cost = 100000 if maximization else -100000
     pivot_column = -1
 
-    for j in range(m):
+    for j in range(m-1):  # j < m-1 to skip RHS column
         print(A[0][j])
         if (maximization and A[0][j] < best_reduced_cost)\
                 or (minimization and A[0][j] > best_reduced_cost):
             pivot_column = j
             best_reduced_cost = A[0][j]
-            # print("new best cost{}".format(best_reduced_cost))
-
-    # print("Best var : x{j} = {cost}".format(j = pivot_column, cost = best_reduced_cost))
 
     if (maximization and best_reduced_cost >= 0) or\
             (minimization and best_reduced_cost <= 0):
@@ -123,6 +126,9 @@ def optimality_iteration(A):
     row_operation(A, pivot_row, pivot_column)
 
 
+# improves optimality
+# returns -1 if solution is feasible (all rhs values are positive)
+# Throws an error if the problem is infeasible (all coefficients in the pivot are row non-negative)
 def feasibility_iteration(A):
     n, m = A.shape
     # choose an infeasible variable to leave (pivot row)
@@ -162,13 +168,11 @@ if __name__ == '__main__':
                 print(f"Could not parse \"{s} , i = {i}, j = {j}")
                 exit(0)
 
-    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in A]))
-
     while feasibility_iteration(A) != -1:
-        print(A)
+        pretty_print(A)
 
     while optimality_iteration(A) != -1:
-        print(A)
+        pretty_print(A)
     '''if ~automatic:
         while True:
             pivot_column = int(input("Enter entering var index: "))  # pivot column
