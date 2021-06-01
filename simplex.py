@@ -25,11 +25,8 @@ minimization = not maximization
 '''
 '''
 7
-4
-0 0 -1 0 0 0 0
-1 -2 2 1 0 0 -8
--1 1 1 0 1 0 4
-2 -1 4 0 0 1 10
+3
+3 2 -1 0 1 0 5
 '''
 
 
@@ -132,14 +129,15 @@ def optimality_iteration(A):
 def feasibility_iteration(A):
     n, m = A.shape
     # choose an infeasible variable to leave (pivot row)
+    best_rhs = 1000000
     pivot_row = -1
     for i in range(n):
         if i == 0:  # skip z row
             continue
 
-        if A[i][m-1] < 0:
+        if A[i][m-1] < best_rhs:
             pivot_row = i
-            break
+            best_rhs = A[i][m-1]
 
     if pivot_row == -1:
         print("Feasibility achieved")
